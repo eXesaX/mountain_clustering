@@ -34,6 +34,16 @@ class GUI:
         self.current_step = 0
         self.dist_fn = euclid_distance
 
+        self.funcs_list = [
+            "Эвклидово",
+            "Схематотехническое"
+        ]
+
+        self.funcs_dict = {
+            "Эвклидово": euclid_distance,
+            "Схематотехническое": schematic_distance
+        }
+
         
 
         # buttons
@@ -91,6 +101,11 @@ class GUI:
         self.b_c = Button(self.window, text="Задать число кластеров", command=self.set_c)
         self.b_c.grid(row=3, column=4)
 
+        self.curr_func = StringVar()
+        self.curr_func.set(self.funcs_list[0])
+        self.funcs_menu = OptionMenu(self.window, self.curr_func, *self.funcs_list)
+        self.funcs_menu.grid(row=3, column=5)
+
         self.window.mainloop()
 
     def set_alpha(self):
@@ -139,7 +154,8 @@ class GUI:
         # self.alpha = calc_avg_dist(self.points, euclid_distance)
 
         print("alpha: {0}".format(self.alpha))
-
+        f_str = self.curr_func.get()
+        self.dist_fn = self.funcs_dict[f_str]
         self.pot_p = calc_potential(self.points, self.dist_fn, self.alpha)
 
         # assign colors
@@ -168,6 +184,8 @@ class GUI:
         return colored_points
 
     def prepare_steps(self):
+        f_str = self.curr_func.get()
+        self.dist_fn = self.funcs_dict[f_str]
         sorted_pot_p = sort_by_potential(self.pot_p)
         print(sorted_pot_p)
         self.steps.append(self.colorize(sorted_pot_p))
@@ -209,7 +227,9 @@ class GUI:
         clusters = []
         for step in self.steps:
             clusters.append(step[0][0])
-
+        print("clen: {0}".format(len(clusters)))
+        f_str = self.curr_func.get()
+        self.dist_fn = self.funcs_dict[f_str]
         clustered = clusterize(clusters, self.points, self.dist_fn)
         print(len(clustered.keys()))
         for (x, y), ps in clustered.items():

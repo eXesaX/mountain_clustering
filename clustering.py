@@ -19,9 +19,11 @@ def get_cluster(num_of_points, d, X, Y):
 def euclid_distance(point_a, point_b):
     x0, y0 = point_a
     x1, y1 = point_b
+    print("euclid")
     return sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2)
 
 def schematic_distance(point_a, point_b):
+    print("schematic")
     return abs(point_a[0] - point_b[0]) + abs(point_a[1] - point_b[1])
 
 def potential(alpha, dist_fn, point_a, point_b):
@@ -74,7 +76,7 @@ def clusterize(cluster_centers, points, dist_fn):
             for cluster in cluster_centers:
                 dist = dist_fn(cluster, point)
                 dists.append((cluster, dist))
-            c = max(dists, key=lambda x: x[1])
+            c = min(dists, key=lambda x: x[1])
             clusters[c[0]].append(point)
         return clusters
 
